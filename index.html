@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ben Graff — ML Engineer, Builder, Investor</title>
+  <meta name="description" content="Portfolio of Ben Graff — Machine Learning Engineer at TaxHawk, real estate investor, and prolific builder.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%25' stop-color='%2300d4ff'/><stop offset='100%25' stop-color='%237c3aed'/></linearGradient></defs><rect width='64' height='64' rx='14' fill='%230a0a1a'/><text x='32' y='43' font-family='Arial,sans-serif' font-weight='900' font-size='30' fill='url(%23g)' text-anchor='middle'>BG</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: '#0a0a1a',
+            electric: '#00d4ff',
+            violet: '#7c3aed',
+            amber: '#f59e0b',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: #7c3aed #0a0a1a;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a1a;
+      color: #f8fafc;
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* ── Particle Canvas ── */
+    #particle-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── Cursor Trail ── */
+    .cursor-dot {
+      position: fixed;
+      width: 6px;
+      height: 6px;
+      background: #00d4ff;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.3s;
+      mix-blend-mode: screen;
+    }
+
+    /* ── Gradient Text ── */
+    .gradient-text {
+      background: linear-gradient(135deg, #00d4ff 0%, #7c3aed 50%, #f59e0b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .gradient-text-blue {
+      background: linear-gradient(135deg, #00d4ff, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Glassmorphism ── */
+    .glass {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1rem;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1rem;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.4s ease;
+    }
+
+    .glass-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      border-color: rgba(0, 212, 255, 0.3);
+      box-shadow: 0 20px 60px rgba(0, 212, 255, 0.1),
+                  0 0 40px rgba(124, 58, 237, 0.08);
+    }
+
+    /* ── Glow Ring (profile photo) ── */
+    .glow-ring {
+      position: relative;
+    }
+
+    .glow-ring::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, #00d4ff, #7c3aed, #f59e0b, #00d4ff);
+      z-index: -1;
+      animation: spin-glow 4s linear infinite;
+    }
+
+    @keyframes spin-glow {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── Scroll Animations ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-40px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal-left.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(40px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal-right.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* ── Staggered Badge Animation ── */
+    .badge {
+      opacity: 0;
+      transform: translateY(20px) scale(0.8);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .badge.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    /* ── Typing Cursor ── */
+    .typing-cursor {
+      display: inline-block;
+      width: 3px;
+      height: 1.1em;
+      background: #00d4ff;
+      margin-left: 2px;
+      vertical-align: text-bottom;
+      animation: blink 0.8s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    /* ── Scroll Indicator ── */
+    .scroll-indicator {
+      animation: bounce-down 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce-down {
+      0%, 100% { transform: translateY(0); opacity: 1; }
+      50% { transform: translateY(12px); opacity: 0.5; }
+    }
+
+    /* ── Floating Neon Blobs (full-page, fixed) ── */
+    .blob-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .blob-layer .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.45;
+      animation: float-blob 14s ease-in-out infinite;
+    }
+
+    .blob-layer .blob:nth-child(1) {
+      width: 500px; height: 500px;
+      background: #00ffcc;
+      top: 5%; left: -5%;
+      animation-delay: 0s;
+    }
+
+    .blob-layer .blob:nth-child(2) {
+      width: 450px; height: 450px;
+      background: #bf00ff;
+      top: 30%; right: -8%;
+      animation-delay: -3s;
+    }
+
+    .blob-layer .blob:nth-child(3) {
+      width: 400px; height: 400px;
+      background: #ff00aa;
+      bottom: 20%; left: 25%;
+      animation-delay: -7s;
+    }
+
+    .blob-layer .blob:nth-child(4) {
+      width: 350px; height: 350px;
+      background: #00d4ff;
+      bottom: 5%; right: 15%;
+      animation-delay: -10s;
+    }
+
+    .blob-layer .blob:nth-child(5) {
+      width: 300px; height: 300px;
+      background: #39ff14;
+      top: 60%; left: -3%;
+      animation-delay: -5s;
+      animation-duration: 18s;
+    }
+
+    @keyframes float-blob {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(50px, -40px) scale(1.1); }
+      50% { transform: translate(-30px, 30px) scale(0.9); }
+      75% { transform: translate(40px, 20px) scale(1.05); }
+    }
+
+    /* ── Filter Buttons ── */
+    .filter-btn {
+      padding: 0.5rem 1.25rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: transparent;
+      color: #94a3b8;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .filter-btn:hover {
+      border-color: rgba(0, 212, 255, 0.4);
+      color: #f8fafc;
+    }
+
+    .filter-btn.active {
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(124, 58, 237, 0.2));
+      border-color: #00d4ff;
+      color: #00d4ff;
+    }
+
+    /* ── Section Divider ── */
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.3), rgba(124, 58, 237, 0.3), transparent);
+    }
+
+    /* ── Footer Gradient Border ── */
+    .footer-gradient-border {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00d4ff, #7c3aed, #f59e0b, transparent);
+      background-size: 200% 100%;
+      animation: gradient-slide 4s linear infinite;
+    }
+
+    @keyframes gradient-slide {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 200% 0%; }
+    }
+
+    /* ── Project Card Grid ── */
+    .project-card {
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.4s ease,
+                  border-color 0.4s ease,
+                  opacity 0.4s ease;
+    }
+
+    .project-card.hidden-card {
+      display: none;
+    }
+
+    /* ── Nav ── */
+    .nav-glass {
+      background: rgba(10, 10, 26, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .nav-link {
+      position: relative;
+      color: #94a3b8;
+      transition: color 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: #00d4ff;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #00d4ff, #7c3aed);
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .blob-layer .blob { opacity: 0.3; }
+      .blob-layer .blob:nth-child(1) { width: 300px; height: 300px; }
+      .blob-layer .blob:nth-child(2) { width: 250px; height: 250px; }
+      .blob-layer .blob:nth-child(3) { width: 200px; height: 200px; }
+      .blob-layer .blob:nth-child(4) { width: 180px; height: 180px; }
+      .blob-layer .blob:nth-child(5) { width: 160px; height: 160px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Neon Blob Background (fixed, full-page) -->
+  <div class="blob-layer">
+    <div class="blob"></div>
+    <div class="blob"></div>
+    <div class="blob"></div>
+    <div class="blob"></div>
+    <div class="blob"></div>
+  </div>
+
+  <!-- Particle Canvas Background -->
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- Cursor Trail -->
+  <div id="cursor-trail"></div>
+
+  <!-- Navigation -->
+  <nav id="navbar" class="nav-glass fixed top-0 left-0 right-0 z-50 opacity-0 -translate-y-full" style="transition: opacity 0.4s, transform 0.4s;">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="#hero" class="text-lg font-bold gradient-text-blue">BG</a>
+      <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+        <a href="#about" class="nav-link">About</a>
+        <a href="#businesses" class="nav-link">Businesses</a>
+        <a href="#live-projects" class="nav-link">Live Projects</a>
+        <a href="#graveyard" class="nav-link">Graveyard</a>
+        <a href="#clients" class="nav-link">Client Work</a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </div>
+      <button id="mobile-menu-btn" class="md:hidden text-white" aria-label="Menu">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+    <div id="mobile-menu" class="md:hidden hidden px-6 pb-4 flex flex-col gap-4 text-sm font-medium">
+      <a href="#about" class="nav-link">About</a>
+      <a href="#businesses" class="nav-link">Businesses</a>
+      <a href="#live-projects" class="nav-link">Live Projects</a>
+      <a href="#graveyard" class="nav-link">Graveyard</a>
+      <a href="#clients" class="nav-link">Client Work</a>
+      <a href="#contact" class="nav-link">Contact</a>
+    </div>
+  </nav>
+
+  <!-- ═══════════ HERO ═══════════ -->
+  <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+
+    <div class="relative z-10 text-center px-6 max-w-4xl mx-auto">
+      <!-- Profile Photo -->
+      <div class="mb-8 flex justify-center">
+        <div class="glow-ring w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden">
+          <img
+            src="assets/profile pic.jpeg"
+            alt="Ben Graff"
+            class="w-full h-full object-cover rounded-full"
+            onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'w-full h-full rounded-full bg-gradient-to-br from-[#00d4ff] to-[#7c3aed] flex items-center justify-center text-5xl font-bold text-white\'>BG</div>';"
+          >
+        </div>
+      </div>
+
+      <h1 class="text-5xl md:text-7xl font-black mb-4 gradient-text leading-tight">
+        Ben Graff
+      </h1>
+      <p class="text-lg md:text-xl text-slate-400 mb-6 font-medium">
+        Machine Learning Engineer &nbsp;|&nbsp; Builder &nbsp;|&nbsp; Real Estate Investor
+      </p>
+      <p class="text-xl md:text-2xl text-slate-300 h-10">
+        <span id="typed-text"></span><span class="typing-cursor"></span>
+      </p>
+
+      <!-- Scroll Down -->
+      <div class="absolute bottom-10 left-1/2 -translate-x-1/2 scroll-indicator">
+        <a href="#about" class="text-slate-500 hover:text-electric transition">
+          <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ ABOUT ═══════════ -->
+  <section id="about" class="relative z-10 py-24 px-6">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center reveal">
+        <span class="gradient-text-blue">About Me</span>
+      </h2>
+
+      <div class="glass p-8 md:p-10 reveal mb-12">
+        <div class="grid md:grid-cols-2 gap-8">
+          <div>
+            <p class="text-slate-300 leading-relaxed mb-6">
+              I'm a <span class="text-electric font-semibold">Machine Learning Engineer at TaxHawk, Inc.</span>, where I build computer vision, NLP, and fraud detection systems that serve millions of tax filers every year.
+            </p>
+            <p class="text-slate-300 leading-relaxed mb-6">
+              I graduated from <span class="text-electric font-semibold">BYU with a B.S. in Computer Science</span>, where I served as VP of the AI Club, worked as a Research Assistant in the Neural Networks & ML Lab, and led the autonomy subsystem on the Mars Rover Capstone team.
+            </p>
+            <p class="text-slate-300 leading-relaxed">
+              Outside of engineering, I'm a <span class="text-amber-400 font-semibold">real estate investor</span> and compulsive builder — always shipping side projects, launching businesses, and exploring what's next.
+            </p>
+          </div>
+          <div class="flex flex-col justify-center">
+            <div class="space-y-4">
+              <div class="flex items-start gap-3 reveal-left">
+                <span class="text-electric text-xl mt-0.5">&#9670;</span>
+                <div>
+                  <p class="font-semibold text-white">ML Engineer @ TaxHawk</p>
+                  <p class="text-sm text-slate-400">Computer vision, NLP, fraud detection for millions of users</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 reveal-left" style="transition-delay: 0.1s;">
+                <span class="text-violet-400 text-xl mt-0.5">&#9670;</span>
+                <div>
+                  <p class="font-semibold text-white">BYU Computer Science</p>
+                  <p class="text-sm text-slate-400">VP of AI Club · Mars Rover Capstone (Autonomy)</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 reveal-left" style="transition-delay: 0.2s;">
+                <span class="text-violet-400 text-xl mt-0.5">&#9670;</span>
+                <div>
+                  <p class="font-semibold text-white">Research Assistant</p>
+                  <p class="text-sm text-slate-400">Neural Networks & Machine Learning Lab</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 reveal-left" style="transition-delay: 0.3s;">
+                <span class="text-amber-400 text-xl mt-0.5">&#9670;</span>
+                <div>
+                  <p class="font-semibold text-white">Real Estate Investor</p>
+                  <p class="text-sm text-slate-400">Building wealth through property investments</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tech Stack Badges -->
+      <div class="text-center reveal">
+        <h3 class="text-sm font-semibold uppercase tracking-widest text-slate-500 mb-6">Tech Stack</h3>
+        <div id="badge-container" class="flex flex-wrap justify-center gap-3">
+          <span class="badge px-4 py-2 rounded-full text-sm font-medium glass" style="transition-delay:0.00s">Python</span>
+          <span class="badge px-4 py-2 rounded-full text-sm font-medium glass" style="transition-delay:0.05s">TypeScript</span>
+          <span class="badge px-4 py-2 rounded-full text-sm font-medium glass" style="transition-delay:0.10s">JavaScript</span>
+          <span class="badge px-4 py-2 rounded-full text-sm font-medium glass" style="transition-delay:0.15s">Swift</span>
+          <span class="badge px-4 py-2 rounded-full text-sm font-medium glass" style="transition-delay:0.20s">PyTorch</span>
+          <span class="badge px-4 py-2 rounded-full text-sm font-medium glass" style="transition-delay:0.25s">Vue</span>
+          <span class="badge px-4 py-2 rounded-full text-sm font-medium glass" style="transition-delay:0.30s">React</span>
+          <span class="badge px-4 py-2 rounded-full text-sm font-medium glass" style="transition-delay:0.35s">Next.js</span>
+          <span class="badge px-4 py-2 rounded-full text-sm font-medium glass" style="transition-delay:0.40s">Node.js</span>
+          <span class="badge px-4 py-2 rounded-full text-sm font-medium glass" style="transition-delay:0.45s">AWS</span>
+          <span class="badge px-4 py-2 rounded-full text-sm font-medium glass" style="transition-delay:0.50s">Docker</span>
+          <span class="badge px-4 py-2 rounded-full text-sm font-medium glass" style="transition-delay:0.55s">DynamoDB</span>
+          <span class="badge px-4 py-2 rounded-full text-sm font-medium glass" style="transition-delay:0.60s">Supabase</span>
+          <span class="badge px-4 py-2 rounded-full text-sm font-medium glass" style="transition-delay:0.65s">Three.js</span>
+          <span class="badge px-4 py-2 rounded-full text-sm font-medium glass" style="transition-delay:0.70s">Lens Studio</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider max-w-4xl mx-auto"></div>
+
+  <!-- ═══════════ BUSINESSES ═══════════ -->
+  <section id="businesses" class="relative z-10 py-24 px-6">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4 text-center reveal">
+        <span class="gradient-text-blue">Businesses</span>
+      </h2>
+      <p class="text-center text-slate-400 mb-12 reveal">Companies and products I've built from scratch.</p>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <!-- Constelara -->
+        <div class="glass-card p-6 reveal" style="transition-delay: 0s;">
+          <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-electric/20 to-violet-500/20 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-electric" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-2">Constelara</h3>
+          <p class="text-slate-400 text-sm mb-4">AI-native property management SaaS — automating tenant communication, maintenance, and operations with AI agents.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs px-2 py-1 rounded-full bg-electric/10 text-electric">Vue 3</span>
+            <span class="text-xs px-2 py-1 rounded-full bg-electric/10 text-electric">AWS</span>
+            <span class="text-xs px-2 py-1 rounded-full bg-electric/10 text-electric">DynamoDB</span>
+          </div>
+        </div>
+
+        <!-- VibeLaunch -->
+        <div class="glass-card p-6 reveal" style="transition-delay: 0.1s;">
+          <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-violet-500/20 to-amber-500/20 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-2">VibeLaunch</h3>
+          <p class="text-slate-400 text-sm mb-4">Multi-app platform with monorepo architecture — rapidly launching and scaling web applications from a shared foundation.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs px-2 py-1 rounded-full bg-violet-500/10 text-violet-400">Next.js</span>
+            <span class="text-xs px-2 py-1 rounded-full bg-violet-500/10 text-violet-400">Remix</span>
+            <span class="text-xs px-2 py-1 rounded-full bg-violet-500/10 text-violet-400">Supabase</span>
+          </div>
+        </div>
+
+        <!-- Synopsium Labs -->
+        <div class="glass-card p-6 reveal" style="transition-delay: 0.2s;">
+          <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-amber-500/20 to-electric/20 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-2">Synopsium Labs</h3>
+          <p class="text-slate-400 text-sm mb-4">TranscriptTalk — Senate hearing video analysis & memo generation. Turning hours of testimony into actionable briefs.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs px-2 py-1 rounded-full bg-amber-500/10 text-amber-400">AI/NLP</span>
+            <span class="text-xs px-2 py-1 rounded-full bg-amber-500/10 text-amber-400">Video</span>
+            <span class="text-xs px-2 py-1 rounded-full bg-amber-500/10 text-amber-400">Summarization</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider max-w-4xl mx-auto"></div>
+
+  <!-- ═══════════ LIVE PROJECTS ═══════════ -->
+  <section id="live-projects" class="relative z-10 py-24 px-6">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4 text-center reveal">
+        <span class="gradient-text-blue">Live Projects</span>
+      </h2>
+      <p class="text-center text-slate-400 mb-4 reveal">Projects that are currently live and in active use.</p>
+
+      <div class="glass p-10 text-center reveal">
+        <p class="text-slate-500 text-lg italic">Nothing here yet — stay tuned.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider max-w-4xl mx-auto"></div>
+
+  <!-- ═══════════ PROJECT GRAVEYARD ═══════════ -->
+  <section id="graveyard" class="relative z-10 py-24 px-6">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4 text-center reveal">
+        <span class="gradient-text-blue">💀 Project Graveyard 💀</span>
+      </h2>
+      <p class="text-center text-slate-400 mb-10 reveal">Projects I've built, shipped, and left to rest in peace.</p>
+
+      <!-- Filter Tabs -->
+      <div class="flex flex-wrap justify-center gap-2 mb-10 reveal" id="filter-container">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="ai-ml">AI / ML</button>
+        <button class="filter-btn" data-filter="dev-tools">Developer Tools</button>
+        <button class="filter-btn" data-filter="web">Web Apps</button>
+        <button class="filter-btn" data-filter="mobile">Mobile</button>
+        <button class="filter-btn" data-filter="games">Games</button>
+        <button class="filter-btn" data-filter="ar">AR</button>
+      </div>
+
+      <!-- Project Grid -->
+      <div id="project-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- MCP Server MySQL -->
+        <div class="glass-card project-card p-6 reveal" data-category="dev-tools">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-electric"></span>
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-semibold">Developer Tools</span>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">MCP Server MySQL</h3>
+          <p class="text-slate-400 text-sm mb-4">Published npm package providing MySQL database access for LLMs via the Model Context Protocol.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">Node.js</span>
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">TypeScript</span>
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">MCP</span>
+          </div>
+        </div>
+
+        <!-- VS Code Debugger Extension -->
+        <div class="glass-card project-card p-6 reveal" data-category="dev-tools" style="transition-delay:0.05s">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-electric"></span>
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-semibold">Developer Tools</span>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">VS Code Debugger Extension</h3>
+          <p class="text-slate-400 text-sm mb-4">AI-powered debugging assistant for VS Code with multi-LLM support — context-aware error resolution.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">TypeScript</span>
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">VS Code API</span>
+          </div>
+        </div>
+
+        <!-- Custom Website Editor -->
+        <div class="glass-card project-card p-6 reveal" data-category="ai-ml" style="transition-delay:0.1s">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-violet-400"></span>
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-semibold">AI / ML</span>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">Custom Website Editor</h3>
+          <p class="text-slate-400 text-sm mb-4">AI-powered WYSIWYG website editor with live preview — generate and edit pages with natural language.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">Next.js</span>
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">React</span>
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">DeepSeek</span>
+          </div>
+        </div>
+
+        <!-- HomeHarvest -->
+        <div class="glass-card project-card p-6 reveal" data-category="ai-ml" style="transition-delay:0.15s">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-violet-400"></span>
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-semibold">AI / ML</span>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">HomeHarvest</h3>
+          <p class="text-slate-400 text-sm mb-4">Published Python library for real estate data scraping with MLS-format output. Used by investors and analysts.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">Python</span>
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">pandas</span>
+          </div>
+        </div>
+
+        <!-- King of the Goats -->
+        <div class="glass-card project-card p-6 reveal" data-category="games" style="transition-delay:0.2s">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-semibold">Games</span>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">King of the Goats</h3>
+          <p class="text-slate-400 text-sm mb-4">Physics-based multiplayer goat combat game — ram opponents off the mountaintop in glorious 3D.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">Three.js</span>
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">Cannon.js</span>
+          </div>
+        </div>
+
+        <!-- Chat with Video Contents -->
+        <div class="glass-card project-card p-6 reveal" data-category="ai-ml" style="transition-delay:0.25s">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-violet-400"></span>
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-semibold">AI / ML</span>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">Chat with Video Contents</h3>
+          <p class="text-slate-400 text-sm mb-4">Conversational AI over video transcripts — ask questions and get answers grounded in video content via FAISS retrieval.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">Python</span>
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">FAISS</span>
+          </div>
+        </div>
+
+        <!-- Control Your Scroll -->
+        <div class="glass-card project-card p-6 reveal" data-category="web" style="transition-delay:0.3s">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-green-400"></span>
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-semibold">Web Apps</span>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">Control Your Scroll</h3>
+          <p class="text-slate-400 text-sm mb-4">Productivity tool to prevent doom scrolling — set limits and take back control of your screen time.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">JavaScript</span>
+          </div>
+        </div>
+
+        <!-- Snap AR Lenses -->
+        <div class="glass-card project-card p-6 reveal" data-category="ar" style="transition-delay:0.35s">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-pink-400"></span>
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-semibold">AR</span>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">Snap AR Lenses</h3>
+          <p class="text-slate-400 text-sm mb-4">AR face filters for FreeTaxUSA — money toss and money face effects built in Lens Studio.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">Lens Studio</span>
+          </div>
+        </div>
+
+        <!-- X Post Reader -->
+        <div class="glass-card project-card p-6 reveal" data-category="mobile" style="transition-delay:0.4s">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-semibold">Mobile</span>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">X Post Reader</h3>
+          <p class="text-slate-400 text-sm mb-4">Native iOS app for reading X/Twitter posts — clean interface for browsing content without the noise.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">Swift</span>
+          </div>
+        </div>
+
+        <!-- Declutter AI -->
+        <div class="glass-card project-card p-6 reveal" data-category="mobile" style="transition-delay:0.45s">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-semibold">Mobile</span>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">Declutter AI</h3>
+          <p class="text-slate-400 text-sm mb-4">iOS app using on-device ML for home organization — photograph clutter and get smart suggestions.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">Swift</span>
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">ML</span>
+          </div>
+        </div>
+
+        <!-- PetPix -->
+        <div class="glass-card project-card p-6 reveal" data-category="ai-ml" style="transition-delay:0.5s">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-violet-400"></span>
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-semibold">AI / ML</span>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">PetPix</h3>
+          <p class="text-slate-400 text-sm mb-4">AI image generation for pets — inpainting, outpainting, and style variation using diffusion models.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">Python</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider max-w-4xl mx-auto"></div>
+
+  <!-- ═══════════ CLIENT WORK ═══════════ -->
+  <section id="clients" class="relative z-10 py-24 px-6">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4 text-center reveal">
+        <span class="gradient-text-blue">Client Work</span>
+      </h2>
+      <p class="text-center text-slate-400 mb-12 reveal">Websites and applications built for clients.</p>
+
+      <div class="grid sm:grid-cols-2 gap-6">
+        <div class="glass-card p-6 reveal">
+          <h3 class="text-lg font-bold text-white mb-2">PureMama Freeze-Drying</h3>
+          <p class="text-slate-400 text-sm">Custom business website for a freeze-drying company — product showcase, brand identity, and e-commerce integration.</p>
+        </div>
+        <div class="glass-card p-6 reveal" style="transition-delay: 0.1s;">
+          <h3 class="text-lg font-bold text-white mb-2">Mitchell's Mobile Mechanics</h3>
+          <p class="text-slate-400 text-sm">Professional website for a mobile mechanic service — booking, service areas, and customer reviews.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ FOOTER / CONTACT ═══════════ -->
+  <div class="footer-gradient-border"></div>
+  <footer id="contact" class="relative z-10 py-16 px-6">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4 reveal">
+        <span class="gradient-text-blue">Get In Touch</span>
+      </h2>
+      <p class="text-slate-400 mb-10 reveal">Always open to interesting conversations and opportunities.</p>
+
+      <div class="flex justify-center gap-6 mb-12 reveal">
+        <!-- GitHub -->
+        <a href="https://github.com/bengraff" target="_blank" rel="noopener noreferrer"
+           class="w-12 h-12 rounded-full glass flex items-center justify-center text-slate-400 hover:text-electric hover:border-electric/30 transition-all duration-300 hover:scale-110">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+        </a>
+        <!-- LinkedIn -->
+        <a href="https://linkedin.com/in/bengraff" target="_blank" rel="noopener noreferrer"
+           class="w-12 h-12 rounded-full glass flex items-center justify-center text-slate-400 hover:text-electric hover:border-electric/30 transition-all duration-300 hover:scale-110">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <!-- X / Twitter -->
+        <a href="https://x.com/benjamin2hard" target="_blank" rel="noopener noreferrer"
+           class="w-12 h-12 rounded-full glass flex items-center justify-center text-slate-400 hover:text-electric hover:border-electric/30 transition-all duration-300 hover:scale-110">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <!-- Email -->
+        <a href="mailto:ben@bengraff.dev"
+           class="w-12 h-12 rounded-full glass flex items-center justify-center text-slate-400 hover:text-electric hover:border-electric/30 transition-all duration-300 hover:scale-110">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        </a>
+      </div>
+
+      <p class="text-slate-600 text-sm">&copy; 2026 Ben Graff. Built with purpose.</p>
+    </div>
+  </footer>
+
+  <!-- ═══════════ JAVASCRIPT ═══════════ -->
+  <script>
+    // ── Particle Starfield ──
+    (function() {
+      const canvas = document.getElementById('particle-canvas');
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      let mouse = { x: -1000, y: -1000 };
+      let width, height;
+
+      function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      }
+
+      function createParticles() {
+        const count = Math.min(Math.floor((width * height) / 8000), 200);
+        particles = [];
+        for (let i = 0; i < count; i++) {
+          particles.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 0.3,
+            vy: (Math.random() - 0.5) * 0.3,
+            r: Math.random() * 1.5 + 0.5,
+            alpha: Math.random() * 0.5 + 0.2,
+          });
+        }
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, width, height);
+
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+
+          // Mouse interaction
+          const dx = mouse.x - p.x;
+          const dy = mouse.y - p.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) {
+            const force = (150 - dist) / 150;
+            p.vx -= (dx / dist) * force * 0.02;
+            p.vy -= (dy / dist) * force * 0.02;
+          }
+
+          p.x += p.vx;
+          p.y += p.vy;
+
+          // Damping
+          p.vx *= 0.999;
+          p.vy *= 0.999;
+
+          // Wrap
+          if (p.x < 0) p.x = width;
+          if (p.x > width) p.x = 0;
+          if (p.y < 0) p.y = height;
+          if (p.y > height) p.y = 0;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(148, 163, 184, ${p.alpha})`;
+          ctx.fill();
+
+          // Draw connections
+          for (let j = i + 1; j < particles.length; j++) {
+            const p2 = particles[j];
+            const d = Math.sqrt((p.x - p2.x) ** 2 + (p.y - p2.y) ** 2);
+            if (d < 120) {
+              ctx.beginPath();
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.strokeStyle = `rgba(0, 212, 255, ${0.08 * (1 - d / 120)})`;
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
+            }
+          }
+        }
+
+        requestAnimationFrame(draw);
+      }
+
+      window.addEventListener('resize', () => { resize(); createParticles(); });
+      document.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+      document.addEventListener('mouseleave', () => { mouse.x = -1000; mouse.y = -1000; });
+
+      resize();
+      createParticles();
+      draw();
+    })();
+
+    // ── Cursor Trail ──
+    (function() {
+      const trail = [];
+      const trailLength = 12;
+      const container = document.getElementById('cursor-trail');
+
+      for (let i = 0; i < trailLength; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'cursor-dot';
+        container.appendChild(dot);
+        trail.push({ el: dot, x: 0, y: 0 });
+      }
+
+      let mouseX = 0, mouseY = 0;
+      let isActive = false;
+
+      document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        if (!isActive) {
+          isActive = true;
+          trail.forEach(t => t.el.style.opacity = '1');
+        }
+      });
+
+      document.addEventListener('mouseleave', () => {
+        isActive = false;
+        trail.forEach(t => t.el.style.opacity = '0');
+      });
+
+      function animateTrail() {
+        let x = mouseX, y = mouseY;
+        trail.forEach((t, i) => {
+          const speed = 0.35 - (i * 0.02);
+          t.x += (x - t.x) * speed;
+          t.y += (y - t.y) * speed;
+          t.el.style.left = t.x - 3 + 'px';
+          t.el.style.top = t.y - 3 + 'px';
+          t.el.style.transform = `scale(${1 - i * 0.07})`;
+          t.el.style.opacity = isActive ? (1 - i / trailLength) * 0.6 : 0;
+          x = t.x;
+          y = t.y;
+        });
+        requestAnimationFrame(animateTrail);
+      }
+
+      // Only enable on non-touch devices
+      if (!('ontouchstart' in window)) {
+        animateTrail();
+      }
+    })();
+
+    // ── Typing Effect ──
+    (function() {
+      const el = document.getElementById('typed-text');
+      const phrases = [
+        'Building AI-powered solutions',
+        'Shipping products that matter',
+        'Turning ideas into reality',
+      ];
+      let phraseIdx = 0, charIdx = 0, deleting = false;
+
+      function type() {
+        const current = phrases[phraseIdx];
+        if (!deleting) {
+          el.textContent = current.substring(0, charIdx + 1);
+          charIdx++;
+          if (charIdx === current.length) {
+            setTimeout(() => { deleting = true; type(); }, 2000);
+            return;
+          }
+          setTimeout(type, 60 + Math.random() * 40);
+        } else {
+          el.textContent = current.substring(0, charIdx - 1);
+          charIdx--;
+          if (charIdx === 0) {
+            deleting = false;
+            phraseIdx = (phraseIdx + 1) % phrases.length;
+            setTimeout(type, 500);
+            return;
+          }
+          setTimeout(type, 30);
+        }
+      }
+
+      setTimeout(type, 1000);
+    })();
+
+    // ── Scroll-Triggered Animations (Intersection Observer) ──
+    (function() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+      document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+
+      // Badge stagger
+      const badgeObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.querySelectorAll('.badge').forEach(b => b.classList.add('visible'));
+          }
+        });
+      }, { threshold: 0.2 });
+
+      const badgeContainer = document.getElementById('badge-container');
+      if (badgeContainer) badgeObserver.observe(badgeContainer);
+    })();
+
+    // ── Navbar Show/Hide on Scroll ──
+    (function() {
+      const nav = document.getElementById('navbar');
+      let lastScroll = 0;
+
+      window.addEventListener('scroll', () => {
+        const currentScroll = window.scrollY;
+        if (currentScroll > 300) {
+          nav.style.opacity = '1';
+          nav.style.transform = 'translateY(0)';
+        } else {
+          nav.style.opacity = '0';
+          nav.style.transform = 'translateY(-100%)';
+        }
+        lastScroll = currentScroll;
+      });
+    })();
+
+    // ── Mobile Menu ──
+    (function() {
+      const btn = document.getElementById('mobile-menu-btn');
+      const menu = document.getElementById('mobile-menu');
+      btn.addEventListener('click', () => menu.classList.toggle('hidden'));
+      menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menu.classList.add('hidden')));
+    })();
+
+    // ── Project Filter ──
+    (function() {
+      const buttons = document.querySelectorAll('.filter-btn');
+      const cards = document.querySelectorAll('.project-card');
+
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          buttons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          const filter = btn.dataset.filter;
+          cards.forEach(card => {
+            if (filter === 'all' || card.dataset.category === filter) {
+              card.classList.remove('hidden-card');
+            } else {
+              card.classList.add('hidden-card');
+            }
+          });
+        });
+      });
+    })();
+
+    // ── Slow Drift on Fixed Blobs ──
+    (function() {
+      const blobs = document.querySelectorAll('.blob-layer .blob');
+      window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        blobs.forEach((blob, i) => {
+          const speed = 0.015 + i * 0.008;
+          const xDrift = Math.sin(scrollY * 0.001 + i * 1.5) * 30;
+          blob.style.transform = `translate(${xDrift}px, ${-scrollY * speed}px)`;
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
