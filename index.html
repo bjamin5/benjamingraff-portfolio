@@ -573,14 +573,73 @@
 
   <!-- ═══════════ LIVE PROJECTS ═══════════ -->
   <section id="live-projects" class="relative z-10 py-24 px-6">
-    <div class="max-w-6xl mx-auto">
+    <div class="max-w-5xl mx-auto">
       <h2 class="text-3xl md:text-4xl font-bold mb-4 text-center reveal">
         <span class="gradient-text-blue">Live Projects</span>
       </h2>
-      <p class="text-center text-slate-400 mb-4 reveal">Projects that are currently live and in active use.</p>
+      <p class="text-center text-slate-400 mb-12 reveal">Projects that are currently live and in active use.</p>
 
-      <div class="glass p-10 text-center reveal">
-        <p class="text-slate-500 text-lg italic">Nothing here yet — stay tuned.</p>
+      <!-- YT Trim -->
+      <div class="glass-card p-8 md:p-10 reveal">
+        <div class="flex flex-col md:flex-row gap-8 items-center md:items-start">
+          <img
+            src="assets/yt-trim-icon.png"
+            alt="YT Trim app icon"
+            class="w-28 h-28 md:w-32 md:h-32 flex-shrink-0 drop-shadow-2xl"
+          >
+          <div class="flex-1 text-center md:text-left">
+            <div class="flex flex-col md:flex-row md:items-center gap-3 mb-3 justify-center md:justify-start">
+              <h3 class="text-2xl font-bold text-white">YT Trim</h3>
+              <span class="text-xs px-2 py-1 rounded-full bg-electric/10 text-electric font-medium self-center md:self-auto">macOS · v1.0</span>
+            </div>
+            <p class="text-slate-300 leading-relaxed mb-5">
+              A minimalist macOS app for downloading and trimming YouTube videos. Built in SwiftUI with <span class="text-electric font-semibold">zero third-party dependencies</span> — every line is first-party Apple frameworks or our own code. Uses <a href="https://github.com/yt-dlp/yt-dlp" target="_blank" rel="noopener" class="text-electric underline-offset-4 hover:underline">yt-dlp</a> and <a href="https://ffmpeg.org" target="_blank" rel="noopener" class="text-electric underline-offset-4 hover:underline">ffmpeg</a> under the hood.
+            </p>
+            <div class="flex flex-wrap gap-2 mb-6 justify-center md:justify-start">
+              <span class="text-xs px-2 py-1 rounded-full bg-electric/10 text-electric">Swift</span>
+              <span class="text-xs px-2 py-1 rounded-full bg-electric/10 text-electric">SwiftUI</span>
+              <span class="text-xs px-2 py-1 rounded-full bg-violet-500/10 text-violet-400">yt-dlp</span>
+              <span class="text-xs px-2 py-1 rounded-full bg-violet-500/10 text-violet-400">ffmpeg</span>
+              <span class="text-xs px-2 py-1 rounded-full bg-amber-500/10 text-amber-400">AVKit</span>
+            </div>
+            <div class="flex flex-wrap gap-3 justify-center md:justify-start">
+              <a
+                href="downloads/YT-Trim-1.0.0.dmg"
+                download
+                class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-electric to-violet-500 text-white font-semibold text-sm transition-all hover:scale-105 hover:shadow-lg hover:shadow-electric/30"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+                Download for Mac
+                <span class="text-xs opacity-75 font-normal">· 1.5 MB</span>
+              </a>
+              <a
+                href="#yt-trim-install"
+                class="inline-flex items-center gap-2 px-6 py-3 rounded-full glass text-slate-300 font-medium text-sm hover:text-white transition"
+              >
+                First-time install
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- First-launch instructions (anchored, collapsible) -->
+        <details id="yt-trim-install" class="mt-8 group">
+          <summary class="cursor-pointer list-none flex items-center gap-2 text-sm font-semibold text-slate-300 hover:text-electric transition">
+            <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            First-launch instructions
+          </summary>
+          <div class="mt-4 pl-6 text-sm text-slate-400 space-y-2 leading-relaxed">
+            <p>Because YT Trim isn't signed with an Apple Developer ID, macOS will warn you the very first time you open it. After that it launches normally.</p>
+            <ol class="list-decimal list-inside space-y-1 ml-2">
+              <li>Open the downloaded <code class="text-electric">YT-Trim-1.0.0.dmg</code> and drag <strong>YT Trim</strong> into Applications.</li>
+              <li>In your Applications folder, <strong>right-click</strong> (or Control-click) YT Trim and choose <strong>Open</strong>.</li>
+              <li>macOS asks to confirm — click <strong>Open</strong>.</li>
+              <li>From now on, launch normally from the Dock or Spotlight.</li>
+            </ol>
+            <p class="text-xs text-slate-500 pt-2">On macOS Sequoia (15+) without an "Open" button: System Settings → Privacy &amp; Security → "Open Anyway" next to YT Trim.</p>
+          </div>
+        </details>
       </div>
     </div>
   </section>
